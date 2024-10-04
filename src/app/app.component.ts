@@ -1,13 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { CommentsComponent } from './comments/comments.component'; // Импорт компонента комментариев
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  template: '<app-comments></app-comments>', // Используем компонент в шаблоне
+  imports: [CommentsComponent] // Добавляем компонент в импорты
 })
-export class AppComponent {
-  title = 'comments-app';
-}
+export class AppComponent {}
