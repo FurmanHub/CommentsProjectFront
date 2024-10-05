@@ -1,27 +1,59 @@
 <div class="comments-container">
-  <h2>Комментарии</h2>
-  <ul>
-    <li *ngFor="let comment of comments">
-      <strong>{{ comment?.userName}}</strong> ({{ comment?.email}}):
-      <a *ngIf="comment.homePage" href="{{ comment.homePage }}" target="_blank">Перейти на домашнюю страницу</a>
-    </li>
-  </ul>
+  <h2>Заглавные комментарии</h2>
+  <!-- Таблица заглавных комментариев -->
+  <table>
+    <thead>
+    <tr>
+      <th (click)="sortBy('userName')">Имя пользователя</th>
+      <th (click)="sortBy('email')">Email</th>
+      <th (click)="sortBy('createdAt')">Дата добавления</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let comment of paginatedComments">
+      <td>{{ comment.userName }}</td>
+      <td>{{ comment.email }}</td>
+      <td>{{ comment.createdAt | date:'short' }}</td>
+      <td>
+        <button (click)="toggleReply(comment)">Ответить</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <!-- Форма для добавления нового заглавного комментария -->
+  <div>
+    <h3>Добавить новый комментарий</h3>
+    <form (ngSubmit)="addMainComment()">
+      <label for="userName">Имя пользователя:</label>
+      <input id="userName" [(ngModel)]="newMainComment.userName" name="userName" required />
+      <br>
+      <label for="email">Email:</label>
+      <input id="email" [(ngModel)]="newMainComment.email" name="email" required type="email" />
+      <br>
+      <label for="homePage">Домашняя страница (необязательно):</label>
+      <input id="homePage" [(ngModel)]="newMainComment.homePage" name="homePage" type="url" />
+      <br>
+      <label for="text">Комментарий:</label>
+      <textarea id="text" [(ngModel)]="newMainComment.text" name="text" required></textarea>
+      <br>
+      <button type="submit">Добавить комментарий</button>
+    </form>
+  </div>
 
-  <h3>Добавить новый комментарий</h3>
-  <form (ngSubmit)="createComment()" #commentForm="ngForm">
-    <label for="userName">Имя пользователя</label>
-    <input type="text" id="userName" [(ngModel)]="newComment.userName" name="userName" required />
+  <!-- Форма для ответа на комментарий -->
+  <div *ngIf="selectedComment">
+    <h3>Ответить на комментарий</h3>
+    <form (ngSubmit)="addReply(selectedComment)">
+      <label for="replyText">Ответ:</label>
+      <textarea id="replyText" [(ngModel)]="replyText" name="replyText" required></textarea>
+      <button type="submit">Отправить ответ</button>
+    </form>
+  </div>
 
-    <label for="email">Email</label>
-    <input type="email" id="email" [(ngModel)]="newComment.email" name="email" required />
-
-    <label for="homePage">Домашняя страница</label>
-    <input type="url" id="homePage" [(ngModel)]="newComment.homePage" name="homePage" />
-
-    <label for="text">Текст комментария</label>
-    <textarea id="text" [(ngModel)]="newComment.text" name="text" required></textarea>
-
-    <button type="submit" [disabled]="commentForm.invalid">Добавить комментарий</button>
-  </form>
-
+  <!-- Пагинация -->
+  <div class="pagination">
+    <button (click)="previousPage()" [disabled]="currentPage === 1">Назад</button>
+    <span>Страница {{ currentPage }} из {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Вперед</button>
+  </div>
 </div>

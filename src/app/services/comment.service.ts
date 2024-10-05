@@ -1,27 +1,25 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Comment } from '../models/comment.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommentService {
-  private apiUrl = 'http://localhost:3000/comments'; // URL для взаимодействия с бэкендом
+  private apiUrl = 'http://localhost:3000/comments';
 
   constructor(private http: HttpClient) {}
 
-  // Получение комментариев с пагинацией
-  getComments(limit: number = 10, page: number = 1): Observable<any> {
-    return this.http.get(`${this.apiUrl}?limit=${limit}&page=${page}`);
+  getComments(page: number, limit: number): Observable<Comment[]> {
+    return this.http.get<Comment[]>(`${this.apiUrl}?page=${page}&limit=${limit}`);
   }
 
-  // Создание нового комментария
-  createComment(commentData: any): Observable<any> {
-    return this.http.post(this.apiUrl, commentData);
+  addComment(comment: Comment): Observable<Comment> {
+    return this.http.post<Comment>(this.apiUrl, comment);
   }
 
-  // Редактирование комментария
-  updateComment(id: number, commentData: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, commentData);
+  addReply(commentId: number, reply: Comment): Observable<Comment> {
+    return this.http.post<Comment>(`${this.apiUrl}/${commentId}/replies`, reply);
   }
 }
